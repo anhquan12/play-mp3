@@ -1,21 +1,30 @@
-var mp3_API = " https://2-dot-backup-server-002.appspot.com/_api/v2/songs/get-free-songs";
-var http = new XMLHttpRequest();
-http.open("GET", mp3_API, true);
-http.onreadystatechange = function () {
+var MY_API = 'https://2-dot-backup-server-002.appspot.com/_api/v2/songs/get-free-songs';
+
+var xmlHttpRequest = new XMLHttpRequest();
+xmlHttpRequest.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
-        var js0nObject = JSON.parse(http.responseText);
+        var listSong = JSON.parse(this.responseText);
         var content = '';
-        for (var i = 0; i < js0nObject.length; i++) {
-            var videoItem = '<ul>';
-            videoItem += '<li>' + js0nObject[i].id + '</li>';
-            videoItem += '<li> <img width="100" height="100" src="' + js0nObject[i].thumbnail + '"> </li>';
-            videoItem += '<li>' + js0nObject[i].name + '</li>';
-            videoItem += '<li>' + js0nObject[i].author + '</li>';
-            videoItem += '<li>' + js0nObject[i].singer + '</li>';
-            videoItem += '</ul>';
-            content += videoItem;
+        for (var i = 0; i < listSong.length; i++) {
+            content += '<div class="song-item">';
+            content += '<div class="song-index">' + (i + 1) + '</div>';
+            content += '<div class="song-thumbnail">';
+            content += '<img src="' + listSong[i].thumbnail + '" alt="">';
+            content += '</div>';
+            content += '<div class="song-infor">';
+            content += '<div class="song-name">' + listSong[i].name + '</div>';
+            content += '<div class="song-singer">' + listSong[i].singer + '</div>';
+            content += '</div>';
+            content += '<div class="song-control" onclick="playSong(\'' + listSong[i].link + '\', \'' + listSong[i].name + '\', \'' + listSong[i].singer + '\')">Play</div>';
+            content += '</div>';
         }
-        document.getElementById('demo').innerHTML = content;
+        document.getElementById('list-song').innerHTML = content;
     }
-};
-http.send();
+}
+xmlHttpRequest.open('GET', MY_API, true);
+xmlHttpRequest.send();
+
+function playSong(link, name, singer) {
+    document.getElementById('my-mp3').src = link;
+    document.getElementById('current-play-title').innerHTML = 'Current playing: ' + name + " - " + singer;
+}
